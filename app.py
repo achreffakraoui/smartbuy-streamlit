@@ -16,6 +16,14 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Téléchargement des images si nécessaire (Render deployment)
+try:
+    from download_data import download_images_from_kaggle, check_images_available
+    if not check_images_available():
+        download_images_from_kaggle()
+except Exception:
+    pass
+
 # Import des modules
 from database import Database
 from pages_improved import HomePage, SearchPage, CartPage, CheckoutPage, ContactPage, ProfilePage, ProductDetailsPage

@@ -214,6 +214,16 @@ class BasePage:
             st.error(f"Erreur similarité hybride : {e}")
             return pd.DataFrame()
     
+    def get_category_icon(self, category):
+        """Retourne l'icône correspondant à la catégorie"""
+        icons = {
+            'Casual Shoes': '👟', 'Sports Shoes': '⚽', 'Heels': '👠',
+            'Shirts': '👔', 'Tshirts': '👕', 'Tops': '👚',
+            'Kurtas': '👗', 'Watches': '⌚', 'Handbags': '👜',
+            'Sunglasses': '🕶️'
+        }
+        return icons.get(category, '🛍️')
+
     def display_product_card(self, product, key, show_details_button=True):
         """Affiche une carte produit standardisée"""
         with st.container():
@@ -223,11 +233,16 @@ class BasePage:
             if os.path.exists(img_path):
                 st.image(img_path, width=250)
             else:
+                category = product.get('category', '')
+                icon = self.get_category_icon(category)
+                product_name = product.get('display name', 'Produit')[:30]
                 st.markdown(f"""
                 <div style='background: linear-gradient(135deg, #6c757d 0%, #495057 100%); 
-                           height: 200px; display: flex; align-items: center; 
-                           justify-content: center; border-radius: 10px; color: white; margin-bottom: 0.5rem;'>
-                    <span style='font-size: 2rem;'>🛍️</span>
+                           height: 200px; display: flex; flex-direction: column; align-items: center; 
+                           justify-content: center; border-radius: 10px; color: white; margin-bottom: 0.5rem;
+                           padding: 10px; text-align: center;'>
+                    <span style='font-size: 3rem;'>{icon}</span>
+                    <span style='font-size: 0.75rem; margin-top: 8px; opacity: 0.9;'>{product_name}</span>
                 </div>
                 """, unsafe_allow_html=True)
             
@@ -484,15 +499,22 @@ class ProductDetailsPage(BasePage):
         
         with col1:
             # Image principale
-            img_path = f"data/{product.get('image_path', 'default.jpg')}"
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            img_path = os.path.join(base_dir, 'data', product.get('image_path', 'default.jpg'))
             if os.path.exists(img_path):
                 st.image(img_path, width=400)
             else:
-                st.markdown("""
+                category = product.get('category', '')
+                icon = self.get_category_icon(category)
+                product_name = product.get('display name', 'Produit')[:40]
+                st.markdown(f"""
                 <div style='background: linear-gradient(135deg, #6c757d 0%, #495057 100%); 
-                           height: 400px; display: flex; align-items: center; 
-                           justify-content: center; border-radius: 10px; color: white;'>
-                    <span style='font-size: 4rem;'>🛍️</span>
+                           height: 400px; display: flex; flex-direction: column; align-items: center; 
+                           justify-content: center; border-radius: 10px; color: white;
+                           padding: 20px; text-align: center;'>
+                    <span style='font-size: 5rem;'>{icon}</span>
+                    <span style='font-size: 1rem; margin-top: 15px; opacity: 0.9;'>{product_name}</span>
+                    <span style='font-size: 0.8rem; margin-top: 8px; opacity: 0.7;'>{category}</span>
                 </div>
                 """, unsafe_allow_html=True)
         
@@ -894,11 +916,13 @@ class CartPage(BasePage):
             col1, col2, col3, col4 = st.columns([1, 3, 1, 1])
             
             with col1:
-                img_path = f"data/{item.get('image_path', 'default.jpg')}"
+                base_dir = os.path.dirname(os.path.abspath(__file__))
+                img_path = os.path.join(base_dir, 'data', item.get('image_path', 'default.jpg'))
                 if os.path.exists(img_path):
                     st.image(img_path, width=80)
                 else:
-                    st.markdown("📷")
+                    icon = self.get_category_icon(item.get('category', ''))
+                    st.markdown(f"<div style='font-size:2.5rem; text-align:center;'>{icon}</div>", unsafe_allow_html=True)
             
             with col2:
                 st.markdown(f"**{item.get('display name', 'Produit')}**")
