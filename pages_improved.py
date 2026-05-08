@@ -10,7 +10,11 @@ import joblib
 import os
 from PIL import Image
 import pickle
-import faiss
+try:
+    import faiss
+    FAISS_AVAILABLE = True
+except ImportError:
+    FAISS_AVAILABLE = False
 
 # ============================================
 # CLASSE DE BASE POUR LES PAGES
@@ -41,16 +45,24 @@ class BasePage:
             
             # Index FAISS pour recherche visuelle
             try:
-                self.faiss_index = faiss.read_index(os.path.join(models_dir, 'resnet_faiss.index'))
-                self.has_faiss = True
+                if FAISS_AVAILABLE:
+                    self.faiss_index = faiss.read_index(os.path.join(models_dir, 'resnet_faiss.index'))
+                    self.has_faiss = True
+                else:
+                    self.faiss_index = None
+                    self.has_faiss = False
             except:
                 self.faiss_index = None
                 self.has_faiss = False
             
             # Index FAISS hybride
             try:
-                self.hybrid_index = faiss.read_index(os.path.join(models_dir, 'hybrid_faiss.index'))
-                self.has_hybrid = True
+                if FAISS_AVAILABLE:
+                    self.hybrid_index = faiss.read_index(os.path.join(models_dir, 'hybrid_faiss.index'))
+                    self.has_hybrid = True
+                else:
+                    self.hybrid_index = None
+                    self.has_hybrid = False
             except:
                 self.hybrid_index = None
                 self.has_hybrid = False
