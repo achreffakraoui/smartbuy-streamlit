@@ -20,7 +20,8 @@ st.set_page_config(
 try:
     from download_data import download_images_from_kaggle, check_images_available
     if not check_images_available():
-        download_images_from_kaggle()
+        with st.spinner("📥 Téléchargement des images produits... (première fois uniquement)"):
+            download_images_from_kaggle()
 except Exception:
     pass
 

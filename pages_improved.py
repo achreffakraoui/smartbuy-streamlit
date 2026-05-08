@@ -16,6 +16,19 @@ try:
 except ImportError:
     FAISS_AVAILABLE = False
 
+# Chemin des images (local ./data/ ou Render /data/images)
+_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+_LOCAL_DATA = os.path.join(_BASE_DIR, 'data')
+_RENDER_DATA = "/data/images"
+
+def _resolve_image(filename):
+    """Retourne le chemin absolu d'une image, ou None si introuvable."""
+    for folder in (_RENDER_DATA, _LOCAL_DATA):
+        path = os.path.join(folder, filename)
+        if os.path.exists(path):
+            return path
+    return None
+
 # ============================================
 # CLASSE DE BASE POUR LES PAGES
 # ============================================
@@ -228,9 +241,9 @@ class BasePage:
         """Affiche une carte produit standardisée"""
         with st.container():
             # Image
-            base_dir = os.path.dirname(os.path.abspath(__file__))
-            img_path = os.path.join(base_dir, 'data', product.get('image_path', 'default.jpg'))
-            if os.path.exists(img_path):
+            img_file = product.get('image_path', 'default.jpg')
+            img_path = _resolve_image(img_file)
+            if img_path:
                 st.image(img_path, width=250)
             else:
                 category = product.get('category', '')
@@ -499,9 +512,9 @@ class ProductDetailsPage(BasePage):
         
         with col1:
             # Image principale
-            base_dir = os.path.dirname(os.path.abspath(__file__))
-            img_path = os.path.join(base_dir, 'data', product.get('image_path', 'default.jpg'))
-            if os.path.exists(img_path):
+            img_file = product.get('image_path', 'default.jpg')
+            img_path = _resolve_image(img_file)
+            if img_path:
                 st.image(img_path, width=400)
             else:
                 category = product.get('category', '')
@@ -916,9 +929,8 @@ class CartPage(BasePage):
             col1, col2, col3, col4 = st.columns([1, 3, 1, 1])
             
             with col1:
-                base_dir = os.path.dirname(os.path.abspath(__file__))
-                img_path = os.path.join(base_dir, 'data', item.get('image_path', 'default.jpg'))
-                if os.path.exists(img_path):
+                img_path = _resolve_image(item.get('image_path', 'default.jpg'))
+                if img_path:
                     st.image(img_path, width=80)
                 else:
                     icon = self.get_category_icon(item.get('category', ''))
