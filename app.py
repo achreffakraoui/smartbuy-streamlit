@@ -16,14 +16,19 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Téléchargement des images si nécessaire (Render deployment)
+# Téléchargement des images si nécessaire (Streamlit Cloud / Render)
 try:
     from download_data import download_images_from_kaggle, check_images_available
     if not check_images_available():
-        with st.spinner("📥 Téléchargement des images produits... (première fois uniquement)"):
-            download_images_from_kaggle()
-except Exception:
-    pass
+        with st.spinner("📥 Téléchargement des images produits... (première fois uniquement, ~2-3 min)"):
+            success = download_images_from_kaggle()
+            if success:
+                st.success("✅ Images téléchargées avec succès !")
+                st.rerun()
+            else:
+                st.warning("⚠️ Images non disponibles - vérifiez les secrets KAGGLE_USERNAME et KAGGLE_KEY")
+except Exception as e:
+    st.warning(f"⚠️ Téléchargement images ignoré : {e}")
 
 # Import des modules
 from database import Database

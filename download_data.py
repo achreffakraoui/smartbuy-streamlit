@@ -74,11 +74,8 @@ def download_images_from_kaggle():
         try:
             import kaggle as _  # noqa
         except ImportError:
-            print("📦 Installation de kaggle CLI...")
-            subprocess.check_call(
-                [sys.executable, "-m", "pip", "install", "kaggle", "--quiet"],
-                stdout=subprocess.DEVNULL
-            )
+            print("❌ Module kaggle non disponible - ajoutez kaggle dans requirements.txt")
+            return False
 
         # Créer le dossier data
         os.makedirs(DATA_DIR, exist_ok=True)
