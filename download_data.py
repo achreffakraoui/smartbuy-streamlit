@@ -80,11 +80,11 @@ def download_images_from_kaggle():
         # Créer le dossier data
         os.makedirs(DATA_DIR, exist_ok=True)
 
-        # Télécharger le dataset (version small ~600MB, images 80x60px)
-        print("📦 Téléchargement du dataset fashion-product-images-small...")
+        # Télécharger le dataset (version COMPLETE = images haute résolution ~80x60 -> 400x300)
+        print("📦 Téléchargement du dataset fashion-product-images-dataset (version complète)...")
         result = subprocess.run(
             ["kaggle", "datasets", "download",
-             "-d", "paramaggarwal/fashion-product-images-small",
+             "-d", "paramaggarwal/fashion-product-images-dataset",
              "-p", DATA_DIR, "--unzip"],
             capture_output=True, text=True
         )
